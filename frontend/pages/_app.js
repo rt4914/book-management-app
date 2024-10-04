@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import 'react-toastify/dist/ReactToastify.css'; // Only import once
+import 'react-toastify/dist/ReactToastify.css';
 import '../styles/globals.css';
 import { ApolloProvider } from '@apollo/client';
 import client from '../lib/apollo-client';
