@@ -234,7 +234,8 @@ const Book = () => {
                 <ul>
                   {reviews.map(review => (
                     <li key={review.id} className="border p-4 mb-2 rounded">
-                      <p><strong>{review.user}</strong> {review.rating !== null && <StarRating rating={review.rating} /> }</p>
+                      <p><strong>{review.user}</strong></p>
+                      {review.rating !== null && <StarRating rating={review.rating} /> }
                       <p>{review.comment}</p>
                     </li>
                   ))}
