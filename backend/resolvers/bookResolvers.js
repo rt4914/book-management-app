@@ -41,7 +41,7 @@ const bookQuery = {
       },
     };
   },
-  book: (_, { id }) => Book.findByPk(id, { include: Author }),
+  book: (_, { id }) => Book.findByPk(id),
 }
 
 const bookMutation = {

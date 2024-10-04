@@ -6,8 +6,8 @@ import Pagination from './Pagination';
 
 const AuthorList = () => {
   const [page, setPage] = useState(0);
-  const [authorEdges, setAuthorEdges] = useState([]);
-  const pageSize = 3;
+  const [authorData, setAuthorData] = useState(null);
+  const pageSize = 2;
 
   const { data, loading, error, fetchMore } = useQuery(GET_AUTHORS, {
     variables: {
@@ -18,19 +18,19 @@ const AuthorList = () => {
 
   useEffect(() => {
     if (data) {
-      setAuthorEdges(data.authors.edges);
+      setAuthorData(data);
     }
   }, [data]);
 
   const handleNextPage = () => {
-    if (data?.authors?.pageInfo?.hasNextPage) {
+    if (authorData?.authors?.pageInfo?.hasNextPage) {
       fetchMore({
         variables: {
           first: pageSize,
-          after: data?.authors?.pageInfo?.endCursor,
+          after: authorData.authors.pageInfo.endCursor,
         },
       }).then((fetchMoreResult) => {
-        setAuthorEdges(fetchMoreResult?.data?.authors?.edges);
+        setAuthorData(fetchMoreResult.data);
         setPage((prevPage) => prevPage + 1);
       });
     }
@@ -41,34 +41,37 @@ const AuthorList = () => {
       fetchMore({
         variables: {
           first: pageSize,
-          after: data?.authors?.pageInfo?.startCursor, 
+          after: authorData.authors.pageInfo.startCursor,
         },
       }).then((fetchMoreResult) => {
-        setAuthorEdges(fetchMoreResult?.data?.authors?.edges);
+        setAuthorData(fetchMoreResult.data);
         setPage((prevPage) => prevPage - 1);
       });
     }
   };
 
-  if (loading && !data) return <p>Loading...</p>;
+  if (loading && !authorData) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
+
+  const totalAuthors = authorData?.authors?.edges.length || 0;
+  const showPagination = totalAuthors > 0 && (page > 0 || authorData.authors.pageInfo.hasNextPage);
 
   return (
     <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8 py-8">
       <h2 className="text-2xl font-semibold mb-6">Authors</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {authorEdges.map((author) => (
+        {authorData?.authors.edges.map((author) => (
           <AuthorCard key={author.node.id} author={author.node} />
         ))}
       </div>
-      { authorEdges && authorEdges.length >= pageSize  && 
+      {showPagination && (
         <Pagination 
           page={page} 
-          hasNextPage={data.authors.pageInfo.hasNextPage} 
+          hasNextPage={authorData.authors.pageInfo.hasNextPage} 
           handleNextPage={handleNextPage} 
           handlePreviousPage={handlePreviousPage} 
         />
-      }
+      )}
     </div>
   );
 };

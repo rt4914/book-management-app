@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 const Author = require('../models/Author');
 
 const authorQuery = {
-  authors: async (_, { first = 10, after, filter }) => {
+  authors: async (_, { first = 10, after = 0, filter }) => {
     const where = {};
 
     if (filter) {
@@ -13,6 +13,8 @@ const authorQuery = {
         where.born_date = filter.born_date;
       }
     }
+
+    const totalCount = await Author.count({ where });
 
     const authors = await Author.findAll({
       where,
@@ -27,10 +29,12 @@ const authorQuery = {
       node: author,
     }));
 
+    const hasNextPage = totalCount > (first + edges.length);
+    
     return {
       edges,
       pageInfo: {
-        hasNextPage: authors.length === first,
+        hasNextPage,
         hasPreviousPage: !!after,
         startCursor: edges.length ? edges[0].cursor : null,
         endCursor: edges.length ? edges[edges.length - 1].cursor : null,
@@ -38,7 +42,7 @@ const authorQuery = {
     };
   },
   author: (_, { id }) => Author.findByPk(id),
-}
+};
 
 const authorMutation = {
   createAuthor: async (_, { name, biography, born_date }) => {
@@ -63,7 +67,7 @@ const authorMutation = {
     }
     return "Author not found."; 
   },
-}
+};
 
 const authorResolvers = {
   Query: authorQuery,

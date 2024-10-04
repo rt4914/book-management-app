@@ -5,6 +5,8 @@ import BookCard from './BookCard';
 const BookList = () => {
   const { data, loading, error } = useQuery(GET_BOOKS);
 
+  console.log("data",data);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
