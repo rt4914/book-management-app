@@ -23,7 +23,7 @@ const Book = () => {
     skip: !id,
   });
 
-  console.log("data",data);
+  console.log("data",data)
 
   const [createBook, { loading: createLoading, error: createError }] = useMutation(CREATE_BOOK, {
     onCompleted: () => {
@@ -58,7 +58,7 @@ const Book = () => {
   useEffect(() => {
     if (data?.book) {
       setTitle(data.book.title || '');
-      setAuthorId(data.book.author_id || '');
+      setAuthorId(data.book.author.id || '');
       setDescription(data.book.description || '');
       setPublishedDate(data.book.published_date || '');
     }

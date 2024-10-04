@@ -10,7 +10,10 @@ export const GET_BOOKS = gql`
           title
           description
           published_date
-          author_id
+          author {
+            id
+            name
+          }
         }
       }
       pageInfo {
@@ -63,7 +66,10 @@ export const GET_BOOK = gql`
       title
       description
       published_date
-      author_id 
+      author {
+        id
+        name
+      }
     }
   }
 `;

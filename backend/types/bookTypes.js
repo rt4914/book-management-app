@@ -4,7 +4,7 @@ const bookTypes = `#graphql
     title: String!
     description: String
     published_date: String!
-    author_id: String!
+    author: Author
   }
 `;
 

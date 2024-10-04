@@ -4,9 +4,6 @@ const Author = require('../models/Author');
 
 const bookQuery = {
   books: async (_, { limit = 10, afterPage = 0, filter }) => {
-    console.log("limit:", limit)
-    console.log("afterPage:", afterPage)
-    
     const where = {};
 
     if (filter) {
@@ -29,11 +26,21 @@ const bookQuery = {
       where,
       limit,
       offset: afterPage * limit,
+      include: [{
+        model: Author,
+        attributes: ['id', 'name'],
+      }],
     });
 
     const edges = books.map(book => ({
       cursor: book.id,
-      node: book,
+      node: {
+        ...book.toJSON(),
+        author: {
+          id: book.Author.id,
+          name: book.Author.name,
+        },
+      },
     }));
 
     const hasNextPage = currentPage < totalPages;
@@ -45,12 +52,31 @@ const bookQuery = {
         totalPages,
         currentPage,
         hasNextPage,
-        hasPreviousPage
+        hasPreviousPage,
       },
     };
   },
+
+  book: async (_, { id }) => {
+    const book = await Book.findByPk(id, {
+      include: [{
+        model: Author,
+        attributes: ['id', 'name'],
+      }],
+    });
   
-  book: (_, { id }) => Book.findByPk(id),
+    if (!book) {
+      throw new Error('Book not found');
+    }
+  
+    return {
+      ...book.toJSON(),
+      author: {
+        id: book.Author.id,
+        name: book.Author.name,
+      },
+    };
+  },
 };
 
 const bookMutation = {
@@ -74,7 +100,7 @@ const bookMutation = {
       await book.destroy();
       return "Book deleted.";
     }
-    return "Book not found."; 
+    return "Book not found.";
   },
 };
 

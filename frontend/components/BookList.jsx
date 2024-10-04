@@ -56,9 +56,7 @@ const BookList = () => {
 
   const totalBooks = bookData?.books?.edges.length || 0;
   const showPagination = totalBooks > 0 && (page > 0 || bookData.books.pageInfo.hasNextPage);
-
-  console.log("data:",data)
-
+  
   return (
     <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8 py-8">
       <h2 className="text-2xl font-semibold mb-6">Books</h2>
