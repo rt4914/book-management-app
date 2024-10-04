@@ -1,34 +1,32 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const sequelize = require('./config/postgresdb.js');
+const resolvers = require('./resolvers');
+const typeDefs = require('./types');
+const { connectToMongoDB }= require('./config/mongodb');
 
-const initialDb = 'postgres';
-const targetDb = process.env.DB_NAME;
-const username = process.env.DB_USERNAME;
-const password = process.env.DB_PASSWORD;
-const host = process.env.DB_HOST;
-
-const sequelize = new Sequelize(initialDb, username, password, {
-  host: host,
-  dialect: 'postgres',
-  logging: false,
-});
-
-(async () => {
+const startServer = async () => {
   try {
-    await sequelize.authenticate();
+    await connectToMongoDB();
 
-    const [results] = await sequelize.query(
-      `SELECT 1 FROM pg_database WHERE datname = '${targetDb}'`
-    );
+    const app = express();
 
-    if (results.length === 0) {
-      await sequelize.query(`CREATE DATABASE "${targetDb}";`);
-    }
+    const apolloServer = new ApolloServer({ typeDefs, resolvers });
+    await apolloServer.start();
+    apolloServer.applyMiddleware({ app });
 
-    await sequelize.sync({ alter: true });
+    const PORT = process.env.PORT || 4000;
+    app.listen({ port: PORT }, () => {
+      console.log(`Backend running at http://localhost:${PORT}${apolloServer.graphqlPath}`);
+    });
+
+    // Sync Postgres DB
+    await sequelize.sync();
+    console.log('Postgres connected and synchronized');
   } catch (error) {
-    throw new Error('Database connection error:', error);
+    console.error('Error starting server:', error);
+    process.exit(1);  // Exit the process on error
   }
-})();
+};
 
-module.exports = sequelize;
+startServer();
