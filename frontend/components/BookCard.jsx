@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import StarRating from './StarRating';
 
 const BookCard = ({ book }) => {
   return (
@@ -13,7 +14,7 @@ const BookCard = ({ book }) => {
         </Link>
       </p>
       <p>Published Date: {book.node.published_date}</p>
-      <p>{book.node.average_rating}</p>
+      {book.node.average_rating !== null && <StarRating rating={book.node.average_rating} /> }
       <Link href={`/book?id=${book.node.id}`} passHref>
       <span className='font-medium underline' onClick={e => e.stopPropagation()}>View Details</span>
       </Link>

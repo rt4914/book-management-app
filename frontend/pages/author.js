@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 import Button, { ButtonTypes } from '@/components/Button';
 import Header from '../components/Header';
 import Input from '@/components/Input';
+import Title from '../components/Title';
 import Link from 'next/link';
-import Title from '@/components/Title';
 
 const Author = () => {
   const [name, setName] = useState('');

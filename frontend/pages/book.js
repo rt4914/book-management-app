@@ -7,6 +7,7 @@ import Title from '@/components/Title';
 import Button, { ButtonTypes } from '@/components/Button';
 import Input from '@/components/Input';
 import { toast } from 'react-toastify';
+import StarRating from '@/components/StarRating';
 
 const Book = () => {
   const [title, setTitle] = useState('');
@@ -227,12 +228,13 @@ const Book = () => {
           </form>
           {id &&
             <div className="mt-8 pt-8 border-t-2">
-              <Title>Reviews ({averageRating}/5)</Title>
+              
+              <Title>Reviews {averageRating !== null && <StarRating rating={averageRating} /> }</Title>
               {reviews.length > 0 ? (
                 <ul>
                   {reviews.map(review => (
                     <li key={review.id} className="border p-4 mb-2 rounded">
-                      <p><strong>{review.user}</strong> ({review.rating} stars)</p>
+                      <p><strong>{review.user}</strong> {review.rating !== null && <StarRating rating={review.rating} /> }</p>
                       <p>{review.comment}</p>
                     </li>
                   ))}
