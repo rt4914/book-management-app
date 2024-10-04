@@ -23,8 +23,6 @@ const Book = () => {
     skip: !id,
   });
 
-  console.log("data",data)
-
   const [createBook, { loading: createLoading, error: createError }] = useMutation(CREATE_BOOK, {
     onCompleted: () => {
       toast.success("Book added successfully!");

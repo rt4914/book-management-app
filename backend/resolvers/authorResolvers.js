@@ -1,10 +1,11 @@
 const { Op } = require('sequelize');
 const Author = require('../models/Author');
+const Book = require('../models/Book');
 
 const authorQuery = {
   authors: async (_, { limit = 10, afterPage = 0, filter }) => {
     const where = {};
-  
+
     if (filter) {
       if (filter.name) {
         where.name = { [Op.like]: `%${filter.name}%` };
@@ -13,37 +14,57 @@ const authorQuery = {
         where.born_date = filter.born_date;
       }
     }
-  
+
     const totalCount = await Author.count({ where });
     const totalPages = Math.ceil(totalCount / limit);
     const currentPage = afterPage + 1;
-  
+
     const authors = await Author.findAll({
       where,
       limit,
       offset: afterPage * limit,
+      include: [{
+        model: Book,
+        attributes: ['id', 'title', 'published_date'],
+      }],
     });
-  
+
     const edges = authors.map(author => ({
       cursor: author.id,
-      node: author,
+      node: {
+        ...author.toJSON(),
+        books: author.Books.map(book => ({
+          id: book.id,
+          title: book.title,
+          published_date: book.published_date,
+        })),
+      },
     }));
-  
+
     const hasNextPage = currentPage < totalPages;
     const hasPreviousPage = currentPage > 1;
-  
+
     return {
       edges,
       pageInfo: {
         totalPages,
         currentPage,
         hasNextPage,
-        hasPreviousPage
+        hasPreviousPage,
       },
     };
-  },  
-  author: (_, { id }) => Author.findByPk(id),
+  },
+
+  author: async (_, { id }) => {
+    return await Author.findByPk(id, {
+      include: [{
+        model: Book,
+        attributes: ['id', 'title', 'published_date'],
+      }],
+    });
+  },
 };
+
 
 const authorMutation = {
   createAuthor: async (_, { name, biography, born_date }) => {

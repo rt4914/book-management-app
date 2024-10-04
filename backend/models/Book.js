@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/postgresdb');
-const Author = require('./Author.js');
+const Author = require('./Author');
 
 const Book = sequelize.define(
   'Book',
@@ -17,12 +17,21 @@ const Book = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
+    author_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Author,
+        key: 'id',
+      },
+    }
   },
   {
     timestamps: true,
   }
-)
+);
 
-Book.belongsTo(Author, {foreignKey: 'author_id'});
+Book.belongsTo(Author, { foreignKey: 'author_id' });
+Author.hasMany(Book, { foreignKey: 'author_id' });
 
 module.exports = Book;

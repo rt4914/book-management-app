@@ -9,9 +9,9 @@ const BookCard = ({ book }) => {
         <p>{book.node.description}</p>
         <p>
           Author: 
-          <Link href={`/author?id=${book.node.author.id}`} passHref>
+          {/* <Link href={`/author?id=${book.node.author.id}`} passHref>
             <span className='font-medium underline' onClick={e => e.stopPropagation()}>{book.node.author.name}</span>
-          </Link>
+          </Link> */}
         </p>
         <p>Published Date: {book.node.published_date}</p>
       </div>

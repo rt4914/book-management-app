@@ -34,6 +34,11 @@ export const GET_AUTHORS = gql`
         node {
           id
           name
+          books {
+            id
+            title
+            published_date
+          }
         }
       }
       pageInfo {
@@ -84,6 +89,7 @@ export const GET_AUTHOR = gql`
       books {
         id
         title
+        published_date
       }
     }
   }

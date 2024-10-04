@@ -11,7 +11,7 @@ const AuthorCard = ({ author }) => {
   return (
     <div key={author.id} className="p-4 rounded border border-primary hover:cursor-pointer hover:bg-background" onClick={handleClick}>
       <h3 className="font-bold text-lg">{author.name}</h3>
-      <p className="text-sm text-gray-500">ID: {author.id}</p>
+      <p className="text-sm text-gray-500">Total Books: {author.books.length}</p>
     </div>
   );
 };
