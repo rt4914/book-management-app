@@ -17,12 +17,33 @@ const bookQuery = {
       }
     }
 
+    const authors = await Author.findAll({
+      where: authorWhere,
+      attributes: ['id'],
+    });
+
+    const authorIds = authors.map(author => author.id);
+
+    if (filter && filter.author_name && authorIds.length === 0) {
+      return {
+        edges: [],
+        pageInfo: {
+          totalPages: 0,
+          currentPage: 1,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+      };
+    }
+
     const totalCount = await Book.count({
       where,
       include: [{
         model: Author,
-        where: authorWhere,
-        required: false,
+        where: {
+          ...(authorIds.length > 0 && { id: { [Op.in]: authorIds } }),
+        },
+        required: true,
       }],
     });
 
@@ -36,8 +57,10 @@ const bookQuery = {
       include: [{
         model: Author,
         attributes: ['id', 'name'],
-        where: authorWhere,
-        required: false,
+        where: {
+          ...(authorIds.length > 0 && { id: { [Op.in]: authorIds } }),
+        },
+        required: true, // Ensures that only books with authors are fetched
       }],
     });
 
@@ -96,10 +119,10 @@ const bookQuery = {
 
     return {
       ...book.toJSON(),
-      author: {
+      author: book.Author ? {
         id: book.Author.id,
         name: book.Author.name,
-      },
+      } : null,
       reviews,
       average_rating,
     };
