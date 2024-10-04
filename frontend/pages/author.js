@@ -101,20 +101,14 @@ const Author = () => {
           <Title>{id ? 'Edit Author' : 'Add Author'}</Title>
 
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                placeholder="Author Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
+            <Input 
+              id="name"
+              label="Name"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
 
             <Input 
               id="biography" 
@@ -125,19 +119,14 @@ const Author = () => {
               isTextArea={true} 
             />
 
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="bornDate">
-                Born Date
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="bornDate"
-                type="date"
-                value={bornDate}
-                onChange={(e) => setBornDate(e.target.value)}
-                required
-              />
-            </div>
+            <Input 
+              id="bornDate" 
+              label="Born Date" 
+              value={bornDate} 
+              onChange={(e) => setBornDate(e.target.value)} 
+              type="date"
+              max={new Date().toISOString().split("T")[0]}
+            />
 
             <div className="flex items-center justify-between">
               <Button

@@ -197,7 +197,8 @@ const Book = () => {
               label="Published Date" 
               value={publishedDate} 
               onChange={(e) => setPublishedDate(e.target.value)} 
-              type="date" 
+              type="date"
+              max={new Date().toISOString().split("T")[0]}
             />
 
             <div className="flex items-center justify-between">
@@ -224,54 +225,56 @@ const Book = () => {
               <p className="text-red-500 mt-4">{createError?.message || updateError?.message || deleteError?.message}</p>
             )}
           </form>
-
-          <div className="mt-8">
-            <Title>Reviews ({averageRating}/5)</Title>
-            {reviews.length > 0 ? (
-              <ul>
-                {reviews.map(review => (
-                  <li key={review.id} className="border p-4 mb-2 rounded">
-                    <p><strong>{review.user}</strong> ({review.rating} stars)</p>
-                    <p>{review.comment}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No reviews yet.</p>
-            )}
-
-            <h3 className="mt-4 mb-2">Add a Review</h3>
-            <form onSubmit={handleReviewSubmit}>
-              <Input 
-                id="user" 
-                label="Your Name" 
-                placeholder="Your Name" 
-                value={user} 
-                onChange={(e) => setUser(e.target.value)} 
-              />
-              <Input 
-                id="rating" 
-                label="Rating" 
-                type="number" 
-                min="1" 
-                max="5" 
-                value={rating} 
-                onChange={(e) => setRating(parseInt(e.target.value))} 
-              />
-              <Input 
-                id="comment" 
-                label="Comment" 
-                placeholder="Your Review" 
-                value={comment} 
-                onChange={(e) => setComment(e.target.value)} 
-                isTextArea={true} 
-              />
-              <Button type="submit" disabled={reviewLoading}>
-                {reviewLoading ? 'Adding Review...' : 'Add Review'}
-              </Button>
-              {reviewError && <p className="text-red-500 mt-4">{reviewError.message}</p>}
-            </form>
-          </div>
+          {id &&
+            <div className="mt-8 pt-8 border-t-2">
+              <Title>Reviews ({averageRating}/5)</Title>
+              {reviews.length > 0 ? (
+                <ul>
+                  {reviews.map(review => (
+                    <li key={review.id} className="border p-4 mb-2 rounded">
+                      <p><strong>{review.user}</strong> ({review.rating} stars)</p>
+                      <p>{review.comment}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No reviews yet.</p>
+              )}
+              <div className='mt-8 pt-8 border-t-2'>
+                <Title>Add a review</Title>
+                <form onSubmit={handleReviewSubmit}>
+                  <Input 
+                    id="user" 
+                    label="Your Name" 
+                    placeholder="Your Name" 
+                    value={user} 
+                    onChange={(e) => setUser(e.target.value)} 
+                  />
+                  <Input 
+                    id="rating" 
+                    label="Rating" 
+                    type="number" 
+                    min="1" 
+                    max="5" 
+                    value={rating} 
+                    onChange={(e) => setRating(parseInt(e.target.value))} 
+                  />
+                  <Input 
+                    id="comment" 
+                    label="Comment" 
+                    placeholder="Your Review" 
+                    value={comment} 
+                    onChange={(e) => setComment(e.target.value)} 
+                    isTextArea={true} 
+                  />
+                  <Button type="submit" disabled={reviewLoading}>
+                    {reviewLoading ? 'Adding Review...' : 'Add Review'}
+                  </Button>
+                  {reviewError && <p className="text-red-500 mt-4">{reviewError.message}</p>}
+                </form>
+              </div>
+            </div>
+          }
         </div>
       </div>
     </div>

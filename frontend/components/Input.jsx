@@ -8,6 +8,7 @@ const Input = ({
   onChange,
   type = 'text',
   isTextArea = false,
+  max,
 }) => {
   return (
     <div className="mb-4">
@@ -31,6 +32,7 @@ const Input = ({
           value={value}
           onChange={onChange}
           required
+          max={max}
         />
       )}
     </div>
