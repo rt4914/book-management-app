@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_BOOKS = gql`
-  query GetBooks($first: Int, $after: String, $filter: BookFilterInput) {
-    books(first: $first, after: $after, filter: $filter) {
+  query GetBooks($limit: Int, $afterPage: Int, $filter: BookFilterInput) {
+    books(limit: $limit, afterPage: $afterPage, filter: $filter) {
       edges {
         cursor
         node {
@@ -14,18 +14,18 @@ export const GET_BOOKS = gql`
         }
       }
       pageInfo {
+        totalPages
+        currentPage
         hasNextPage
         hasPreviousPage
-        startCursor
-        endCursor
       }
     }
   }
 `;
 
 export const GET_AUTHORS = gql`
-  query GetAuthors($first: Int, $after: String, $filter: AuthorFilterInput) {
-    authors(first: $first, after: $after, filter: $filter) {
+  query GetAuthors($limit: Int, $afterPage: Int, $filter: AuthorFilterInput) {
+    authors(limit: $limit, afterPage: $afterPage, filter: $filter) {
       edges {
         cursor
         node {
@@ -34,10 +34,10 @@ export const GET_AUTHORS = gql`
         }
       }
       pageInfo {
+        totalPages
+        currentPage
         hasNextPage
         hasPreviousPage
-        startCursor
-        endCursor
       }
     }
   }

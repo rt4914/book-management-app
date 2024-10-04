@@ -11,7 +11,8 @@ const AuthorList = () => {
 
   const { data, loading, error, fetchMore } = useQuery(GET_AUTHORS, {
     variables: {
-      first: pageSize,
+      limit: pageSize,
+      afterPage: page,
     },
     fetchPolicy: 'cache-and-network',
   });
@@ -26,8 +27,8 @@ const AuthorList = () => {
     if (authorData?.authors?.pageInfo?.hasNextPage) {
       fetchMore({
         variables: {
-          first: pageSize,
-          after: authorData.authors.pageInfo.endCursor,
+          limit: pageSize,
+          afterPage: page + 1,
         },
       }).then((fetchMoreResult) => {
         setAuthorData(fetchMoreResult.data);
@@ -40,8 +41,8 @@ const AuthorList = () => {
     if (page > 0) {
       fetchMore({
         variables: {
-          first: pageSize,
-          after: authorData.authors.pageInfo.startCursor,
+          limit: pageSize,
+          afterPage: page - 1,
         },
       }).then((fetchMoreResult) => {
         setAuthorData(fetchMoreResult.data);
@@ -67,6 +68,8 @@ const AuthorList = () => {
       {showPagination && (
         <Pagination 
           page={page} 
+          totalPages={authorData.authors.pageInfo.totalPages} 
+          currentPage={authorData.authors.pageInfo.currentPage}
           hasNextPage={authorData.authors.pageInfo.hasNextPage} 
           handleNextPage={handleNextPage} 
           handlePreviousPage={handlePreviousPage} 

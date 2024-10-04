@@ -2,9 +2,11 @@ const { Op } = require('sequelize');
 const Author = require('../models/Author');
 
 const authorQuery = {
-  authors: async (_, { first = 10, after = 0, filter }) => {
+  authors: async (_, { limit = 10, afterPage = 0, filter }) => {
+    console.log("limit:", limit)
+    console.log("afterPage:", afterPage)
     const where = {};
-
+  
     if (filter) {
       if (filter.name) {
         where.name = { [Op.like]: `%${filter.name}%` };
@@ -13,34 +15,35 @@ const authorQuery = {
         where.born_date = filter.born_date;
       }
     }
-
+  
     const totalCount = await Author.count({ where });
-
+    const totalPages = Math.ceil(totalCount / limit);
+    const currentPage = afterPage + 1;
+  
     const authors = await Author.findAll({
       where,
-      limit: first,
-      ...(after ? {
-        where: { id: { [Op.gt]: after }, ...where },
-      } : {}),
+      limit,
+      offset: afterPage * limit,
     });
-
+  
     const edges = authors.map(author => ({
       cursor: author.id,
       node: author,
     }));
-
-    const hasNextPage = totalCount > (first + edges.length);
-    
+  
+    const hasNextPage = currentPage < totalPages;
+    const hasPreviousPage = currentPage > 1;
+  
     return {
       edges,
       pageInfo: {
+        totalPages,
+        currentPage,
         hasNextPage,
-        hasPreviousPage: !!after,
-        startCursor: edges.length ? edges[0].cursor : null,
-        endCursor: edges.length ? edges[edges.length - 1].cursor : null,
+        hasPreviousPage
       },
     };
-  },
+  },  
   author: (_, { id }) => Author.findByPk(id),
 };
 

@@ -3,7 +3,7 @@ const Book = require('../models/Book');
 const Author = require('../models/Author');
 
 const bookQuery = {
-  books: async (_, { first = 10, after, filter }) => {
+  books: async (_, { limit = 10, afterPage = 0, filter }) => {
     const where = {};
 
     if (filter) {
@@ -18,12 +18,14 @@ const bookQuery = {
       }
     }
 
+    const totalCount = await Book.count({ where });
+    const totalPages = Math.ceil(totalCount / limit);
+    const currentPage = afterPage + 1;
+
     const books = await Book.findAll({
       where,
-      limit: first,
-      ...(after ? {
-        where: { id: { [Op.gt]: after }, ...where },
-      } : {}),
+      limit,
+      offset: afterPage * limit,
     });
 
     const edges = books.map(book => ({
@@ -31,18 +33,22 @@ const bookQuery = {
       node: book,
     }));
 
+    const hasNextPage = currentPage < totalPages;
+    const hasPreviousPage = currentPage > 1;
+
     return {
       edges,
       pageInfo: {
-        hasNextPage: books.length === first,
-        hasPreviousPage: !!after,
-        startCursor: edges.length ? edges[0].cursor : null,
-        endCursor: edges.length ? edges[edges.length - 1].cursor : null,
+        totalPages,
+        currentPage,
+        hasNextPage,
+        hasPreviousPage
       },
     };
   },
+  
   book: (_, { id }) => Book.findByPk(id),
-}
+};
 
 const bookMutation = {
   createBook: async (_, { title, description, published_date, author_id }) => {
@@ -67,11 +73,11 @@ const bookMutation = {
     }
     return "Book not found."; 
   },
-}
+};
 
 const bookResolvers = {
   Query: bookQuery,
-  Mutation: bookMutation
+  Mutation: bookMutation,
 };
 
 module.exports = bookResolvers;

@@ -6,8 +6,8 @@ const inputTypes = require('./inputTypes');
 
 const typeDefs = `#graphql
   type Query {
-    books(first: Int, after: String, filter: BookFilterInput): BookConnection
-    authors(first: Int, after: String, filter: AuthorFilterInput): AuthorConnection
+    books(limit: Int, afterPage: Int, filter: BookFilterInput): BookConnection
+    authors(limit: Int, afterPage: Int, filter: AuthorFilterInput): AuthorConnection
     book(id: ID!): Book
     author(id: ID!): Author
     reviews(book_id: ID!): [Review]

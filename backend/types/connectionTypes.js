@@ -1,9 +1,9 @@
 const connectionTypes = `#graphql
   type PageInfo {
+    totalPages: Int!
+    currentPage: Int!
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
-    startCursor: String
-    endCursor: String
   }
 
   type BookConnection {
