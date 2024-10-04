@@ -60,7 +60,7 @@ const bookQuery = {
         where: {
           ...(authorIds.length > 0 && { id: { [Op.in]: authorIds } }),
         },
-        required: true, // Ensures that only books with authors are fetched
+        required: true,
       }],
     });
 
@@ -68,7 +68,7 @@ const bookQuery = {
       const reviews = await Review.find({ book_id: book.id });
 
       const average_rating = reviews.length > 0 
-        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+        ? parseFloat((reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(2)) 
         : null;
 
       return {
@@ -114,7 +114,7 @@ const bookQuery = {
     const reviews = await Review.find({ book_id: book.id });
 
     const average_rating = reviews.length > 0 
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+      ? parseFloat((reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(2)) 
       : null;
 
     return {
