@@ -53,12 +53,21 @@ const authorQuery = {
   },
 
   author: async (_, { id }) => {
-    return await Author.findByPk(id, {
+    const author = await Author.findByPk(id, {
       include: [{
         model: Book,
         attributes: ['id', 'title', 'published_date'],
       }],
     });
+  
+    if (!author) {
+      throw new Error('Author not found');
+    }
+  
+    return {
+      ...author.toJSON(),
+      books: author.Books,
+    };
   },
 };
 

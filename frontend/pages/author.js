@@ -3,15 +3,11 @@ import { toast } from 'react-toastify';
 import { useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import Button from '@/components/Button';
+import Button, { ButtonTypes } from '@/components/Button';
 import Header from '../components/Header';
 import Input from '@/components/Input';
+import Link from 'next/link';
 import Title from '@/components/Title';
-
-const ButtonTypes = {
-  DEFAULT: 'DEFAULT',
-  DELETE: 'DELETE',
-};
 
 const Author = () => {
   const [name, setName] = useState('');
@@ -150,6 +146,21 @@ const Author = () => {
 
             {(createError || updateError || deleteError) && <p className="text-red-500 mt-4">{createError?.message || updateError?.message || deleteError?.message}</p>}
           </form>
+
+          {data?.author?.books && data.author.books.length > 0 && (
+            <div className="mt-8 border-t pt-8">
+              <Title>Books by {data.author.name}</Title>
+              <ul className="list-disc ml-5 mt-2">
+                {data.author.books.map(book => (
+                  <Link key={book.id} href={`/book?id=${book.id}`}>
+                    <li className='underline'>
+                      {book.title} (Published on: {book.published_date})
+                    </li>
+                  </Link>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>
