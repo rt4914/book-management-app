@@ -4,6 +4,9 @@ const Author = require('../models/Author');
 
 const bookQuery = {
   books: async (_, { limit = 10, afterPage = 0, filter }) => {
+    console.log("limit:", limit)
+    console.log("afterPage:", afterPage)
+    
     const where = {};
 
     if (filter) {
