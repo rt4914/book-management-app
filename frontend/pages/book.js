@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_BOOK, UPDATE_BOOK, DELETE_BOOK, GET_BOOK, GET_AUTHORS } from '../utils/graphql';
+import { CREATE_BOOK, UPDATE_BOOK, DELETE_BOOK, GET_BOOK, GET_AUTHORS, GET_REVIEWS, CREATE_REVIEW } from '../utils/graphql';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import Title from '@/components/Title';
@@ -13,13 +13,22 @@ const Book = () => {
   const [authorId, setAuthorId] = useState('');
   const [description, setDescription] = useState('');
   const [publishedDate, setPublishedDate] = useState('');
+  const [user, setUser] = useState('');
+  const [rating, setRating] = useState(1);
+  const [comment, setComment] = useState('');
+  const [reviews, setReviews] = useState([]);
 
   const router = useRouter();
   const { id } = router.query;
 
   const { data: authorsData, loading: authorsLoading } = useQuery(GET_AUTHORS);
-  const { data, loading: bookLoading } = useQuery(GET_BOOK, {
+  const { data: bookData, loading: bookLoading } = useQuery(GET_BOOK, {
     variables: { id },
+    skip: !id,
+  });
+
+  const { data: reviewsData } = useQuery(GET_REVIEWS, {
+    variables: { book_id: id },
     skip: !id,
   });
 
@@ -53,14 +62,30 @@ const Book = () => {
     }
   });
 
-  useEffect(() => {
-    if (data?.book) {
-      setTitle(data.book.title || '');
-      setAuthorId(data.book.author.id || '');
-      setDescription(data.book.description || '');
-      setPublishedDate(data.book.published_date || '');
+  const [createReview, { loading: reviewLoading, error: reviewError }] = useMutation(CREATE_REVIEW, {
+    onCompleted: () => {
+      toast.success("Review added successfully!");
+      setUser('');
+      setRating(1);
+      setComment('');
+    },
+    onError: (error) => {
+      toast.error(`Error adding review: ${error.message}`);
     }
-  }, [data]);
+  });
+
+  useEffect(() => {
+    if (bookData?.book) {
+      setTitle(bookData.book.title || '');
+      setAuthorId(bookData.book.author.id || '');
+      setDescription(bookData.book.description || '');
+      setPublishedDate(bookData.book.published_date || '');
+    }
+
+    if (reviewsData) {
+      setReviews(reviewsData.reviews);
+    }
+  }, [bookData, reviewsData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,6 +124,22 @@ const Book = () => {
       } catch (err) {
         console.error(err);
       }
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await createReview({
+        variables: {
+          book_id: id,
+          user,
+          rating,
+          comment,
+        },
+      });
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -181,6 +222,57 @@ const Book = () => {
               <p className="text-red-500 mt-4">{createError?.message || updateError?.message || deleteError?.message}</p>
             )}
           </form>
+
+          {/* Review Section */}
+          <div className="mt-8">
+            <Title>Reviews</Title>
+
+            {reviews.length > 0 ? (
+              <ul>
+                {reviews.map(review => (
+                  <li key={review.id} className="border p-4 mb-2 rounded">
+                    <strong>{review.user}</strong> ({review.rating} stars)<br />
+                    {review.comment}<br />
+                    <small className="text-gray-500">{new Date(review.created_at).toLocaleString()}</small>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No reviews yet.</p>
+            )}
+
+            <h3 className="mt-4 mb-2">Add a Review</h3>
+            <form onSubmit={handleReviewSubmit}>
+              <Input 
+                id="user" 
+                label="Your Name" 
+                placeholder="Your Name" 
+                value={user} 
+                onChange={(e) => setUser(e.target.value)} 
+              />
+              <Input 
+                id="rating" 
+                label="Rating" 
+                type="number" 
+                min="1" 
+                max="5" 
+                value={rating} 
+                onChange={(e) => setRating(parseInt(e.target.value))} 
+              />
+              <Input 
+                id="comment" 
+                label="Comment" 
+                placeholder="Your Review" 
+                value={comment} 
+                onChange={(e) => setComment(e.target.value)} 
+                isTextArea={true} 
+              />
+              <Button type="submit" disabled={reviewLoading}>
+                {reviewLoading ? 'Adding Review...' : 'Add Review'}
+              </Button>
+              {reviewError && <p className="text-red-500 mt-4">{reviewError.message}</p>}
+            </form>
+          </div>
         </div>
       </div>
     </div>

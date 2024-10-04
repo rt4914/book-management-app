@@ -8,7 +8,7 @@ const BookList = () => {
   const [page, setPage] = useState(0);
   const [bookData, setBookData] = useState(null);
   const pageSize = 2;
-  const [filters, setFilters] = useState({ title: '', author_name: '' }); // New filters
+  const [filters, setFilters] = useState({ title: '', author_name: '' });
 
   const { data, loading, error, fetchMore } = useQuery(GET_BOOKS, {
     variables: {

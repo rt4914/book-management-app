@@ -5,6 +5,8 @@ const bookTypes = `#graphql
     description: String
     published_date: String!
     author: Author
+    reviews: [Review!]
+    average_rating: Float
   }
 `;
 

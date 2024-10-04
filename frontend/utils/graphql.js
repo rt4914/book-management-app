@@ -14,6 +14,14 @@ export const GET_BOOKS = gql`
             id
             name
           }
+          reviews {
+            id
+            user
+            rating
+            comment
+            created_at
+          }
+          average_rating
         }
       }
       pageInfo {
@@ -55,7 +63,6 @@ export const GET_REVIEWS = gql`
   query GetReviews($book_id: ID!) {
     reviews(book_id: $book_id) {
       id
-      book_id
       user
       rating
       comment
@@ -75,6 +82,14 @@ export const GET_BOOK = gql`
         id
         name
       }
+      reviews {
+        id
+        user
+        rating
+        comment
+        created_at
+      }
+      average_rating
     }
   }
 `;
@@ -155,7 +170,6 @@ export const CREATE_REVIEW = gql`
   mutation CreateReview($book_id: ID!, $user: String!, $rating: Int!, $comment: String) {
     createReview(book_id: $book_id, user: $user, rating: $rating, comment: $comment) {
       id
-      book_id
       user
       rating
       comment

@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const Book = require('../models/Book');
 const Author = require('../models/Author');
+const Review = require('../models/Review');
 
 const bookQuery = {
   books: async (_, { limit = 10, afterPage = 0, filter }) => {
@@ -40,22 +41,32 @@ const bookQuery = {
       }],
     });
 
-    const edges = books.map(book => ({
-      cursor: book.id,
-      node: {
-        ...book.toJSON(),
-        author: {
-          id: book.Author.id,
-          name: book.Author.name,
+    const booksWithReviews = await Promise.all(books.map(async (book) => {
+      const reviews = await Review.find({ book_id: book.id });
+
+      const average_rating = reviews.length > 0 
+        ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+        : null;
+
+      return {
+        cursor: book.id,
+        node: {
+          ...book.toJSON(),
+          author: {
+            id: book.Author.id,
+            name: book.Author.name,
+          },
+          reviews,
+          average_rating,
         },
-      },
+      };
     }));
 
     const hasNextPage = currentPage < totalPages;
     const hasPreviousPage = currentPage > 1;
 
     return {
-      edges,
+      edges: booksWithReviews,
       pageInfo: {
         totalPages,
         currentPage,
@@ -77,12 +88,20 @@ const bookQuery = {
       throw new Error('Book not found');
     }
   
+    const reviews = await Review.find({ book_id: book.id });
+
+    const average_rating = reviews.length > 0 
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+      : null;
+
     return {
       ...book.toJSON(),
       author: {
         id: book.Author.id,
         name: book.Author.name,
       },
+      reviews,
+      average_rating,
     };
   },
 };
