@@ -12,6 +12,7 @@ const Book = () => {
   const [title, setTitle] = useState('');
   const [authorId, setAuthorId] = useState('');
   const [description, setDescription] = useState('');
+  const [averageRating, setAverageRating] = useState(0.0);
   const [publishedDate, setPublishedDate] = useState('');
   const [user, setUser] = useState('');
   const [rating, setRating] = useState(1);
@@ -77,6 +78,7 @@ const Book = () => {
   useEffect(() => {
     if (bookData?.book) {
       setTitle(bookData.book.title || '');
+      setAverageRating(bookData.book.average_rating || 0.0);
       setAuthorId(bookData.book.author.id || '');
       setDescription(bookData.book.description || '');
       setPublishedDate(bookData.book.published_date || '');
@@ -223,17 +225,14 @@ const Book = () => {
             )}
           </form>
 
-          {/* Review Section */}
           <div className="mt-8">
-            <Title>Reviews</Title>
-
+            <Title>Reviews ({averageRating}/5)</Title>
             {reviews.length > 0 ? (
               <ul>
                 {reviews.map(review => (
                   <li key={review.id} className="border p-4 mb-2 rounded">
-                    <strong>{review.user}</strong> ({review.rating} stars)<br />
-                    {review.comment}<br />
-                    <small className="text-gray-500">{new Date(review.created_at).toLocaleString()}</small>
+                    <p><strong>{review.user}</strong> ({review.rating} stars)</p>
+                    <p>{review.comment}</p>
                   </li>
                 ))}
               </ul>
