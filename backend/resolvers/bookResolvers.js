@@ -5,20 +5,26 @@ const Author = require('../models/Author');
 const bookQuery = {
   books: async (_, { limit = 10, afterPage = 0, filter }) => {
     const where = {};
+    const authorWhere = {};
 
     if (filter) {
       if (filter.title) {
-        where.title = { [Op.like]: `%${filter.title}%` };
+        where.title = { [Op.iLike]: `%${filter.title}%` };
       }
-      if (filter.published_date) {
-        where.published_date = filter.published_date;
-      }
-      if (filter.author_id) {
-        where.author_id = filter.author_id;
+      if (filter.author_name) {
+        authorWhere.name = { [Op.iLike]: `%${filter.author_name}%` };
       }
     }
 
-    const totalCount = await Book.count({ where });
+    const totalCount = await Book.count({
+      where,
+      include: [{
+        model: Author,
+        where: authorWhere,
+        required: false,
+      }],
+    });
+
     const totalPages = Math.ceil(totalCount / limit);
     const currentPage = afterPage + 1;
 
@@ -29,6 +35,8 @@ const bookQuery = {
       include: [{
         model: Author,
         attributes: ['id', 'name'],
+        where: authorWhere,
+        required: false,
       }],
     });
 

@@ -8,10 +8,7 @@ const authorQuery = {
 
     if (filter) {
       if (filter.name) {
-        where.name = { [Op.like]: `%${filter.name}%` };
-      }
-      if (filter.born_date) {
-        where.born_date = filter.born_date;
+        where.name = { [Op.iLike]: `%${filter.name}%` };
       }
     }
 
@@ -64,7 +61,6 @@ const authorQuery = {
     });
   },
 };
-
 
 const authorMutation = {
   createAuthor: async (_, { name, biography, born_date }) => {
