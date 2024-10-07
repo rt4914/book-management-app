@@ -8,12 +8,16 @@ async function connectToMongoDB() {
     return;
   }
 
+  const mongoUrl = process.env.MONGO_DB_URL;
+  if (!mongoUrl) {
+    throw new Error('MONGO_DB_URL environment variable is not set');
+  }
+
   try {
-    await mongoose.connect(process.env.MONGO_DB_URL, {
+    await mongoose.connect(mongoUrl, {
       useUnifiedTopology: true,
     });
     isConnected = mongoose.connection.readyState;
-    console.log('Successfully connected to MongoDB');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
     throw error;

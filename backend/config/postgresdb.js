@@ -1,6 +1,13 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+const checkEnvironmentVariables = ['DB_NAME', 'DB_USERNAME', 'DB_PASSWORD', 'DB_HOST'];
+checkEnvironmentVariables.forEach((varName) => {
+  if (!process.env[varName]) {
+    throw new Error(`${varName} environment variable is not set`);
+  }
+});
+
 const targetDb = process.env.DB_NAME;
 const username = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
@@ -17,12 +24,10 @@ const sequelize = new Sequelize(targetDb, username, password, {
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('Database connected successfully');
-
     await sequelize.sync({ alter: true });
-    console.log('Database synchronized successfully');
   } catch (error) {
     console.error('Database connection error:', error);
+    throw error;
   }
 })();
 
