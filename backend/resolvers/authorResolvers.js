@@ -6,10 +6,8 @@ const authorQuery = {
   authors: async (_, { limit = 10, afterPage = 0, filter }) => {
     const where = {};
 
-    if (filter) {
-      if (filter.name) {
-        where.name = { [Op.iLike]: `%${filter.name}%` };
-      }
+    if (filter?.name) {
+      where.name = { [Op.iLike]: `%${filter.name}%` };
     }
 
     const totalCount = await Author.count({ where });

@@ -7,6 +7,11 @@ const { connectToMongoDB } = require('./config/mongodb');
 require('dotenv').config();
 
 const startServer = async () => {
+  if (!process.env.PORT) {
+    console.error('PORT environment variable is not set.');
+    return;
+  }
+  
   await connectToMongoDB();
 
   const app = express();
