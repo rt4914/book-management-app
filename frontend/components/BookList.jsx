@@ -7,7 +7,7 @@ import Pagination from './Pagination';
 const BookList = () => {
   const [page, setPage] = useState(0);
   const [bookData, setBookData] = useState(null);
-  const pageSize = 2;
+  const pageSize = 6;
   const [filters, setFilters] = useState({ title: '', author_name: '' });
 
   const { data, loading, error, fetchMore } = useQuery(GET_BOOKS, {

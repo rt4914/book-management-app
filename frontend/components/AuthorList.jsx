@@ -8,7 +8,7 @@ const AuthorList = () => {
   const [page, setPage] = useState(0);
   const [authorData, setAuthorData] = useState(null);
   const [nameFilter, setNameFilter] = useState('');
-  const pageSize = 3;
+  const pageSize = 6;
 
   const { data, loading, error, fetchMore } = useQuery(GET_AUTHORS, {
     variables: {
