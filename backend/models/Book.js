@@ -31,7 +31,7 @@ const Book = sequelize.define(
   }
 );
 
-Book.belongsTo(Author, { foreignKey: 'author_id' });
-Author.hasMany(Book, { foreignKey: 'author_id' });
+Book.belongsTo(Author, { foreignKey: 'author_id', onDelete: 'CASCADE' });
+Author.hasMany(Book, { foreignKey: 'author_id', onDelete: 'CASCADE' });
 
 module.exports = Book;
