@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 const { ApolloServer } = require('apollo-server-express');
 const sequelize = require('./config/postgresdb.js');
 const resolvers = require('./resolvers');
@@ -12,13 +11,6 @@ const startServer = async () => {
 
   const app = express();
 
-  const corsOptions = {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-  };
-  
-  app.use(cors(corsOptions));
   const apolloServer = new ApolloServer({ typeDefs, resolvers });
 
   await apolloServer.start();
@@ -27,9 +19,7 @@ const startServer = async () => {
   await sequelize.sync();
 
   const PORT = process.env.PORT || 4000;
-  app.listen(PORT, () => {
-    console.log(`Backend: ${process.env.BASE_URL || `http://localhost:${PORT}`}${apolloServer.graphqlPath}`);
-  });
+  app.listen(PORT);
 };
 
 startServer().catch(err => {

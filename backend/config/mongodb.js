@@ -5,7 +5,6 @@ let isConnected;
 
 async function connectToMongoDB() {
   if (isConnected) {
-    console.log('Using existing MongoDB connection');
     return;
   }
 
