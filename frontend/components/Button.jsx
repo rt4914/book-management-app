@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const ButtonTypes = {
   DEFAULT: 'DEFAULT',
@@ -18,6 +19,14 @@ const Button = ({ children, onClick, type, buttonType = ButtonTypes.DEFAULT, cla
       {children}
     </button>
   );
+};
+
+Button.propTypes = {
+  children: PropTypes.node.isRequired,
+  onClick: PropTypes.func,
+  type: PropTypes.oneOf(['button', 'submit']),
+  buttonType: PropTypes.oneOf(Object.values(ButtonTypes)),
+  className: PropTypes.string,
 };
 
 export default Button;

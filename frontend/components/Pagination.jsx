@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 const Pagination = ({ currentPage, totalPages, hasNextPage, handleNextPage, handlePreviousPage }) => {
   return (
     <div className="flex gap-8 mt-8">
@@ -22,6 +24,14 @@ const Pagination = ({ currentPage, totalPages, hasNextPage, handleNextPage, hand
       </button>
     </div>
   );
+};
+
+Pagination.propTypes = {
+  currentPage: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  hasNextPage: PropTypes.bool.isRequired,
+  handleNextPage: PropTypes.func.isRequired,
+  handlePreviousPage: PropTypes.func.isRequired,
 };
 
 export default Pagination;

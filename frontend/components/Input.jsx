@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Input = ({
   id,
@@ -37,6 +38,17 @@ const Input = ({
       )}
     </div>
   );
+};
+
+Input.propTypes = {
+  id: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  type: PropTypes.oneOf(['text', 'number', 'date']),
+  isTextArea: PropTypes.bool,
+  max: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default Input;

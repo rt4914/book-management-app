@@ -259,7 +259,7 @@ const Book = () => {
                     type="number" 
                     min="1" 
                     max="5" 
-                    value={rating} 
+                    value={rating.toString()} 
                     onChange={(e) => setRating(parseInt(e.target.value))} 
                   />
                   <Input 

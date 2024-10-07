@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 
 const AuthorCard = ({ author }) => {
@@ -16,6 +17,22 @@ const AuthorCard = ({ author }) => {
       <p className="text-sm text-gray-500">Total Books: {totalBooks}</p>
     </div>
   );
+};
+
+AuthorCard.propTypes = {
+  author: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    biography: PropTypes.string,
+    books: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        published_date: PropTypes.string.isRequired,
+      })
+    ),
+  }).isRequired,
 };
 
 export default AuthorCard;

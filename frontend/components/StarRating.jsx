@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const StarRating = ({ rating }) => {
   const totalStars = 5;
@@ -25,6 +26,10 @@ const StarRating = ({ rating }) => {
       <span className="ml-2">{rating.toFixed(2)}/5</span>
     </div>
   );
+};
+
+StarRating.propTypes = {
+  rating: PropTypes.number.isRequired,
 };
 
 export default StarRating;
